@@ -3,51 +3,88 @@
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
 import Button from "../../presentation/components/button";
-import InputField from "@/presentation/components/input_field"
-import OpenAIService from "@/data/service/open_ai_service";
+import InputField from "@/presentation/components/input_field";
+import ProceedJudgementUseCase from "@/domain/use_case/proceed_judgement_use_case";
 // import { userPrompt } from "@/presentation/components/input_field/index"
 
 export default function Home() {
     const router = useRouter()
 
-    const [userPrompt, setUserPrompt] = useState("")
-    const [chatList, setChatList] = useState<string[]>([])
-    // const [input, setInput] = useState("")
-    // const [json, setJson] = useState("")
-
+    const [input, setInput] = useState("")
+    const [userPromptFemale, setUserPromptFemale] = useState("")
+    const [userPromptMale, setUserPromptMale] = useState("")
+    var [chatList, setChatList] = useState<string[]>([])
     // const [response, setResponse] = useState("")
-
-    const open_ai_service = new OpenAIService();
-
-    var response: string
-
-    // const llmResopnse = () => {
-    //     res = await open_ai_service.getResponse(
-    //         userPrompt,
-    //         chatList
-    //     );
-    //     setResponse(res)
-    // }
-
-    const systemPrompt = "You are a judge. You will be given an explanation of a conflict from the couple.\n"
-    + "Carefully analyze the explanation and reform it in a refined sentence.\n"
-    + "Output format should be as following.\n"
-    + "Case name: (a title summarizing the incident)\n"
-    + "Summarization: (an explanation that will be passed to the opponent.)\n"
-    + "Use Korean only. 한국어만 사용하세요.";
+    const [functionCount, setFunctionCount] = useState(0);
+    const [isFact, setFact] = useState(false);
 
 
-    // if (chatList.length < 1 || chatList == undefined){
-    //     setChatList([systemPrompt])
-    // }
-
-    const llmResponse = (userPrompt: string) => {
-
-        setChatList([...chatList, userPrompt])
-        // setJson(JSON.stringify(chatList);
-
-
+    const userClick = (userPrompt: string) => {
+        switch (functionCount) {
+            case 0:
+                setUserPromptFemale(input)
+                chatList.push(input)
+                setFunctionCount(1)
+                break;
+            case 1:
+                setUserPromptMale(input)
+                chatList.push(input)
+                firstResponse()
+                break;
+            case 2:
+                setUserPromptMale(input)
+                chatList.push(input)
+                secondResponse(input)
+            default:
+                setUserPromptMale(input)
+                chatList.push(input)
+                thirdResponse(input)
+        }
+        //chatList.push({role: 'user', content: userPrompt})
     }
+
+    const firstResponse = async () => {
+        const proceed_judgement_use_case = new ProceedJudgementUseCase();
+        const newList = await proceed_judgement_use_case.indictmentAndFact(
+            userPromptFemale,
+            userPromptMale,
+            chatList
+        );
+        setChatList(newList);
+        setFunctionCount(2);
+        //setChatList([...chatList, {role: 'user', content: response.payload}])
+    }
+
+    const secondResponse = async (userFactCheck: string) => {
+        if (chatList[-1].includes('설명이 일치합니다')) {
+            setFact(true);
+        } else {
+            setFact(false);
+        }
+        const proceed_judgement_use_case = new ProceedJudgementUseCase();
+        const newList = await proceed_judgement_use_case.summarizeAndJudgement(
+            `여자 입장: ${userPromptFemale}남자 입장: ${userPromptMale}`,
+            isFact,
+            chatList[-1],
+            userFactCheck,
+            chatList
+        );
+        setChatList(newList);
+        setFunctionCount(3);
+    }
+
+    const thirdResponse = async (userAppeal: string) => {
+        const proceed_judgement_use_case = new ProceedJudgementUseCase();
+        const newList = await proceed_judgement_use_case.rejudgement(
+            chatList[-1],
+            userAppeal,
+            chatList
+        );
+        setChatList(newList);
+        setFunctionCount(functionCount + 1);
+    }
+
+
 
     // const llmResponse = (userPrompt: string) => {
     //     response = await openai.chat.completions.create({
@@ -61,22 +98,11 @@ export default function Home() {
     // }
 
 
-    // chatList.push({role: 'assistant', content: llmResponse})
-
-    // chatList.push({role: 'assistant', content: llmResponse})
-
-
     return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="App">
             <header className="App-header">
                 <div>
-                    System Prompt:<br/>
-                    { systemPrompt }
-                    <br/><br/>
-                    User Prompt:<br/>
-                    { userPrompt }
-                    <br/><br/><br/><br/>
                     <ul>
                         {chatList.map((item, index) => (
                         <li key={index}>{item}</li>
@@ -89,11 +115,11 @@ export default function Home() {
                     <InputField
                         type="add"
                         placeholder="상황을 입력하세요..."
-                        toParent={(value: any) => setUserPrompt(value)}
+                        toParent={(value: any) => setInput(value)}
                         required={false}
-                        value={userPrompt}
+                        value={input}
                     />
-                    <Button type="mini" text="입력" onClick={() => llmResponse(userPrompt)} />
+                    <Button type="mini" text="입력" onClick={() => userClick(input)} />
                 </div>
             </header>
         </div>
