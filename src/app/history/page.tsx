@@ -25,17 +25,17 @@ export default function Home() {
             <header className="App-header">
                 <div>
                     <Button
-                        type="single"
+                        type="sub"
                         text="사건 번호 1"
                         onClick={() => router.push("/chat1")}
                     />
                     <Button
-                        type="single"
+                        type="sub"
                         text="사건 번호 2"
                         onClick={() => router.push("/chat2")}
                     />
                     <Button
-                        type="single"
+                        type="sub"
                         text="사건 번호 3"
                         onClick={() => router.push("/chat3")}
                     />

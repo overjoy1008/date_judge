@@ -16,16 +16,22 @@ export default function Home() {
           <div className="title">
             연애심판
           </div>
+          <div className="description">
+            <p>내가 심판해주마,<br/>누가 잘못인지.</p>
+            <div className="center-image">
+              <img src="/balance.png" alt="이미지" className="image-size"/>
+            </div>
+          </div>
           <div className="w100 flex">
           <Button
-            type="double"
-            text="공소제기"
-            onClick={() => router.push("/chat")}
+            type="double2"
+            text="지난 재판 보기"
+            onClick={() => router.push("/history")}
           />
           <Button
             type="double"
-            text="지난 재판 기록"
-            onClick={() => router.push("/history")}
+            text="공소 제기"
+            onClick={() => router.push("/chat")}
           />
           </div>
         </header>

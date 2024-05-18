@@ -26,3 +26,14 @@ main {
 .w500 {
   width: 500px;
 }
+
+.image-size {
+  max-width: 200px; /* 최대 너비 제한 */
+  height: auto; /* 높이를 자동으로 조절하여 비율 유지 */
+  margin-bottom: 50px; 
+}
+
+.center-image {
+  display: flex;
+  justify-content: center; /* 주 축을 기준으로 중앙 정렬 */
+}

@@ -10,7 +10,7 @@ export type ResultCode = {
   message: string;
 };
 
-export type ButtonProps = "single" | "double" | "mini";
+export type ButtonProps = "single" | "double" | "mini" | "double2" | "sub";
 
 export type InputFieldProps =
   | "text"
@@ -19,4 +19,4 @@ export type InputFieldProps =
   | "select"
   | "add"
   | "hashtag"
-  | "number";
+  | "number"

@@ -13,7 +13,7 @@ export default function InputField(
     const [input, setInput] = useState<string>(value || "")
     const [selected, setSelected] = useState<number>(0)
 
-    var userPrompt: string
+    // var userPrompt: string
 
     useEffect(() => {
         setInput(value || "")
@@ -24,7 +24,7 @@ export default function InputField(
         // toParent && toParent([...selectedWords, input])
         // setSelectedWords([...selectedWords, input])
         setSelectedWords(input)
-        userPrompt = input
+        // userPrompt = input
         setInput("")
     }
 
@@ -72,19 +72,15 @@ export default function InputField(
             )
         default:
             return (
-                <>
-                    <div>{selectedWords}</div>
-                    <div className="flex">
-                        <input
-                            type="text"
-                            className="input"
-                            placeholder={placeholder}
-                            onChange={handleChange}
-                            value={input}
-                        />
-                        <Button type="mini" text="입력" onClick={handleAdd} />
-                    </div>
-                </>
+                <div className="flex">
+                    <input
+                        type="text"
+                        className="input"
+                        placeholder={placeholder}
+                        onChange={handleChange}
+                        value={input}
+                    />
+                </div>
             );
     }
 }
