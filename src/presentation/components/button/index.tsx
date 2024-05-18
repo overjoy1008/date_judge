@@ -1,6 +1,6 @@
 import { ButtonProps } from "@/app/types"
 import "./button.css"
-// import "@/presentation/assets/style/Global.css"
+import "@/presentation/assets/style/Global.css"
 
 export default function Button(
     { type, text, onClick }:
