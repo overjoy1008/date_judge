@@ -8,10 +8,12 @@ export default function InputField(
     { type, placeholder, title, required, toParent, value }:
         { type: InputFieldProps, placeholder?: string, title?: string, required: boolean, toParent?: (value: string | string[] | number) => void, value?: string }
 ) {
-    const [selectedWords, setSelectedWords] = useState<string[]>([])
-    // const [selectedWords, setSelectedWords] = useState<string>(value || "")
+    // const [selectedWords, setSelectedWords] = useState<string[]>([])
+    const [selectedWords, setSelectedWords] = useState<string>("")
     const [input, setInput] = useState<string>(value || "")
     const [selected, setSelected] = useState<number>(0)
+
+    var userPrompt: string
 
     useEffect(() => {
         setInput(value || "")
@@ -19,8 +21,10 @@ export default function InputField(
 
     const handleAdd = () => {
         if (input === "") return
-        toParent && toParent([...selectedWords, input])
-        setSelectedWords([...selectedWords, input])
+        // toParent && toParent([...selectedWords, input])
+        // setSelectedWords([...selectedWords, input])
+        setSelectedWords(input)
+        userPrompt = input
         setInput("")
     }
 
