@@ -1,0 +1,99 @@
+.btn-single {
+  background-color: #222222;
+  margin: 10px 20px;
+  width: 100%;
+  padding: 20px 100px;
+  border: 0px solid;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #eeeeee;
+}
+
+.btn-double {
+  background-color: #222222;
+  margin: 10px 20px;
+  padding: 20px 80px;
+  border: 0px solid;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #eeeeee;
+}
+
+
+.btn-mini {
+  background-color: #222222;
+  margin-left: 20px;
+  width: 100px;
+  padding: 15px 25px;
+  border: 0px solid;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #eeeeee;
+}
+/* 
+
+@import url("../../assets/style/Global.css");
+
+button {
+  border: none;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  padding: 12px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  transition: transform 0.1s;
+  box-sizing: border-box;
+}
+
+button:active {
+  transform: scale(0.95);
+  user-select: none;
+  transition: transform 0.1s;
+}
+
+.button-main {
+  border-radius: 12px;
+  background: var(--brand-500);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+  min-width: 80px;
+  flex: 1 0 0;
+}
+
+@media screen and (min-width: 1024px){
+  .button-main {
+    min-width: 80px;
+  }
+}
+
+.button-sub {
+  border-radius: 12px;
+  border: 1px solid var(--brand-500);
+  background-color: var(--white);
+  color: var(--brand-500);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+  flex: 1 0 0;
+}
+
+.button-mini {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--brand-500);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.button-main:disabled {
+  background: var(--brand-300);
+} */
