@@ -1,5 +1,22 @@
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: bold;
+    color: black;
+}
+
 .title {
     text-align: center;
     font-size: 50px;
     margin-bottom: 100px;
+    font-family: 'Pretendard-Regular';
+}
+
+.description p {
+    font-family: 'Pretendard-Regular';
+    font-size: 20px;
+    margin: 20px 0; /* 위아래 여백 설정 */
+    text-align: center;
+    line-height: 1.5; /* 줄 간격 */
 }

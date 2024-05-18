@@ -16,6 +16,10 @@ export default function Home() {
           <div className="title">
             연애심판
           </div>
+          <div className="description">
+            <p>내가 심판해주마, 누가 잘못인지.</p>
+            <img src="public/balance.png" alt="이미지"/>
+          </div>
           <div className="w100 flex">
           <Button
             type="double"
