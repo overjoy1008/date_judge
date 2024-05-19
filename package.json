@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^5.2.2",
     "dotenv": "^16.4.5",
     "groq": "^3.42.1",
     "groq-sdk": "^0.3.3",

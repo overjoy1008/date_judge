@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
 import Button from "../../presentation/components/button";
+import Gauge from "../../presentation/components/gauge";
 import InputField from "@/presentation/components/input_field";
 import ProceedJudgementUseCase from "@/domain/use_case/proceed_judgement_use_case";
 import { StyledString } from "next/dist/build/swc";
@@ -125,7 +126,7 @@ export default function Home() {
               }
               chatObjectList.push(finalAppeal)
             var finalMessage = {
-                message: "관계 다툼은 주로 한쪽만의 잘못 때문이 아니라 서로의 소통 부족 혹은 소통에서 비롯된 오해로 인해 발생되곤 합니다. 두 분이서 서로 대화를 더 시도하시고 원만한 합의를 맺으시길 바라겠습니다.",
+                message: "재판은 모두 끝났습니다. 이제는 서로 화해할 시간~! 😻",
                 side: 'left',
                 avatar: "/judge.png" // 사용자 프로필 이미지 경로
             }
