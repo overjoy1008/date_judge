@@ -2,8 +2,8 @@ import CodeResponse from "@/app/code_response";
 import { Result } from "@/app/types";
 import OpenAI from "openai";
 
-export default class OpenAIService {
-  async getResponse(
+export default class GroqMixtralService {
+  async getResponse3(
     systemPrompt: string,
     userPrompt: string,
   ): Promise<CodeResponse> {
@@ -12,11 +12,16 @@ export default class OpenAIService {
 
     try {
       var response = await openai.chat.completions.create({  // const response = await openai.chat.completions.create
-          model: 'gpt-4o',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt },
           ],
+          "model": "mixtral-8x7b-32768",
+          "temperature": 1,
+          "max_tokens": 1024,
+          "top_p": 1,
+          "stream": false,
+          "stop": null
         });
       var answer = response.choices[0].message.content;
       console.log('OpenAI called')

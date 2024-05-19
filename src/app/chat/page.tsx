@@ -47,15 +47,15 @@ export default function Home() {
                 secondResponse(input)
                 console.log('Male')
                 break;
-            case 2:
-                setUserPromptMale(input)
+            // case 2:
+            //     setUserPromptMale(input)
                 
-                thirdResponse(input)
-                console.log('공소제기, 팩트')
+            //     thirdResponse(input)
+            //     console.log('공소제기, 팩트')
             default:
                 setUserPromptMale(input)
                 
-                fourthResponse(input)
+                thirdResponse(input)
         }
         //chatList.push({role: 'user', content: userPrompt})
     }
@@ -74,7 +74,7 @@ export default function Home() {
     const secondResponse = async (userPromptMale: string) => {
         const proceed_judgement_use_case = new ProceedJudgementUseCase();
         const newList = await proceed_judgement_use_case.extractFact(
-            `여자 입장: ${chatObjectList[0].message}남자 입장: ${userPromptMale}`,
+            userPromptMale,
             chatObjectList
         );
         setChatObjectList(newList);
@@ -82,27 +82,27 @@ export default function Home() {
         //setChatList([...chatList, {role: 'user', content: response.payload}])
     }
 
-    const thirdResponse = async (userFactCheck: string) => {
-        // if (chatObjectList[-1].includes('설명이 일치합니다')) {
-        //     setFact(true);
-        // } else {
-        //     setFact(false);
-        // }
-        setFact(false); // 일단 버그 고치기 위해서 추가해놓음... 나중에 지울 예정
+    // const thirdResponse = async (userFactCheck: string) => {
+    //     // if (chatObjectList[-1].includes('설명이 일치합니다')) {
+    //     //     setFact(true);
+    //     // } else {
+    //     //     setFact(false);
+    //     // }
+    //     setFact(false); // 일단 버그 고치기 위해서 추가해놓음... 나중에 지울 예정
         
-        const proceed_judgement_use_case = new ProceedJudgementUseCase();
-        const newList = await proceed_judgement_use_case.summarizeAndJudgement(
-            `여자 입장: ${chatObjectList[0].message}남자 입장: ${chatObjectList[2].message}`,
-            isFact,
-            chatObjectList[chatObjectList.length - 1].message,
-            userFactCheck,
-            chatObjectList
-        );
-        setChatObjectList(newList);
-        setFunctionCount(3);
-    }
+    //     const proceed_judgement_use_case = new ProceedJudgementUseCase();
+    //     const newList = await proceed_judgement_use_case.summarizeAndJudgement(
+    //         `여자 입장: ${chatObjectList[0].message}남자 입장: ${chatObjectList[2].message}`,
+    //         isFact,
+    //         chatObjectList[chatObjectList.length - 1].message,
+    //         userFactCheck,
+    //         chatObjectList
+    //     );
+    //     setChatObjectList(newList);
+    //     setFunctionCount(3);
+    // }
 
-    const fourthResponse = async (userAppeal: string) => {
+    const thirdResponse = async (userAppeal: string) => {
         const proceed_judgement_use_case = new ProceedJudgementUseCase();
         const newList = await proceed_judgement_use_case.rejudgement(
             chatObjectList[chatObjectList.length - 1].message,

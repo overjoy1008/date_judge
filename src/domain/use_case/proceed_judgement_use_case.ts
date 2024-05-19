@@ -4,6 +4,8 @@ import { useState } from "react"
 // import { Question, Result } from "@/app/types";
 // import decideSystemPromptUseCase from "@/domain/use_case/decide_system_prompt_use_case";
 import OpenAIService from "@/data/service/open_ai_service";
+import GroqLlama3Service from "@/data/service/groq_llama3_service";
+import GroqMixtralService from "@/data/service/groq_mixtral_service";
 
 export default class ProceedJudgementUseCase {
   async indictment(
@@ -18,6 +20,8 @@ export default class ProceedJudgementUseCase {
     chatObjectList.push(newMessage)
 
     const open_ai_service = new OpenAIService();
+    const groq_llama3_service = new GroqLlama3Service();
+    const groq_mixtral_service = new GroqMixtralService();
 
     var systemPrompt = "";
 
@@ -36,7 +40,16 @@ export default class ProceedJudgementUseCase {
         systemPrompt,
         userPromptFemale
     );
-    const indictmentString = indictment.payload;
+    const indictment2 = await groq_llama3_service.getResponse2(
+      systemPrompt,
+      userPromptFemale
+    );
+    const indictment3 = await groq_mixtral_service.getResponse3(
+      systemPrompt,
+      userPromptFemale
+    );
+
+  const indictmentString = indictment.payload;
 
     newMessage = {
       message: indictmentString,
@@ -49,17 +62,22 @@ export default class ProceedJudgementUseCase {
   }
 
   async extractFact(
-    userPrompt: string,
+    userPromptMale: string,
     chatObjectList: object[]
   ) {
     var newMessage = {
-      message: userPrompt,
+      message: userPromptMale,
       side: 'right',
       avatar: "/user.png" // 사용자 프로필 이미지 경로
     }
     chatObjectList.push(newMessage)
 
+    const userPrompt = `여자 입장: ${chatObjectList[0].message}남자 입장: ${userPromptMale}`
+
     const open_ai_service = new OpenAIService();
+    const groq_llama3_service = new GroqLlama3Service();
+    const groq_mixtral_service = new GroqMixtralService();
+
 
     var systemPrompt = "";
 
@@ -74,6 +92,15 @@ export default class ProceedJudgementUseCase {
       systemPrompt,
       userPrompt
     );
+    const factCheck2 = await groq_llama3_service.getResponse2(
+      systemPrompt,
+      userPrompt
+    );
+    const factCheck3 = await groq_mixtral_service.getResponse3(
+      systemPrompt,
+      userPrompt
+    );
+
     const factCheckString = factCheck.payload;
     
     newMessage = {
@@ -83,30 +110,31 @@ export default class ProceedJudgementUseCase {
     }
     chatObjectList.push(newMessage)
 
-    return chatObjectList;
-  }
 
-  async summarizeAndJudgement(
-    userPrompt: string,
-    isFact: boolean,
-    factCheck: string,
-    userFactCheck: string,
-    chatObjectList: object[]
-  ) {
-    var newMessage = {
-      message: userFactCheck,
-      side: 'right',
-      avatar: "/user.png" // 사용자 프로필 이미지 경로
-    }
-    chatObjectList.push(newMessage)
+  // ------------------------------------------  
+  //   return chatObjectList;
+  // }
+
+  // async summarizeAndJudgement(
+  //   userPrompt: string,
+  //   isFact: boolean,
+  //   factCheck: string,
+  //   userFactCheck: string,
+  //   chatObjectList: object[]
+  // ) {
+  //   var newMessage = {
+  //     message: userFactCheck,
+  //     side: 'right',
+  //     avatar: "/user.png" // 사용자 프로필 이미지 경로
+  //   }
+  //   chatObjectList.push(newMessage)
+  // -------------------------------------------
+
 
     //const userPrompt = `여자 입장: ${userPromptFemale}남자 입장: ${userPromptMale}`;
-    
-    const open_ai_service = new OpenAIService();
+
     
     //const decide_system_prompt_use_case = new decideSystemPromptUseCase();
-
-    var systemPrompt = "";
 
     // if (!isFact) {
     //   // 판결 2 -- 재판결
@@ -136,9 +164,18 @@ export default class ProceedJudgementUseCase {
     
 
     const summary = await open_ai_service.getResponse(
-        systemPrompt,
-        `상황 설명: ${userPrompt} + fact check: ${factCheck}`
+      systemPrompt,
+      `상황 설명: ${userPrompt} + fact check: ${factCheckString}`
     );
+    const summary2 = await groq_llama3_service.getResponse2(
+      systemPrompt,
+      `상황 설명: ${userPrompt} + fact check: ${factCheckString}`
+    );
+    const summary3 = await groq_mixtral_service.getResponse3(
+      systemPrompt,
+      `상황 설명: ${userPrompt} + fact check: ${factCheckString}`
+    );
+
     const summaryString = summary.payload;
     newMessage = {
       message: summaryString,
@@ -176,11 +213,19 @@ export default class ProceedJudgementUseCase {
       +"Reasoning: (Your reasoning should be based on 한국 연애 예절. 양쪽의 입장에서 몰입해서 정당한 이유를 들어 보세요.)\n"
       +"Use Korean only. 한국어만 사용하세요. Answer as if you are elon musk."
   
-
     const judgement = await open_ai_service.getResponse(
       systemPrompt,
       summaryString
     );
+    const judgement2 = await groq_llama3_service.getResponse2(
+      systemPrompt,
+      summaryString
+    );
+    const judgement3 = await groq_mixtral_service.getResponse3(
+      systemPrompt,
+      summaryString
+    );
+
     const judgementString = judgement.payload;
 
     newMessage = {
@@ -193,7 +238,7 @@ export default class ProceedJudgementUseCase {
   }
 
   async rejudgement(
-    judgement1: string,
+    judgement: string,
     userAppeal: string,
     chatObjectList: object[]
   ) {
@@ -206,6 +251,9 @@ export default class ProceedJudgementUseCase {
     
 
     const open_ai_service = new OpenAIService();
+    const groq_llama3_service = new GroqLlama3Service();
+    const groq_mixtral_service = new GroqMixtralService();
+
     
     //const decide_system_prompt_use_case = new decideSystemPromptUseCase();
 
@@ -240,15 +288,25 @@ export default class ProceedJudgementUseCase {
       +"Judgement: (whose fault is it? show the percentage) "
       +"Reasoning: (Your reasoning should be based on 한국 연애 예절. 양쪽의 입장에서 몰입해서 정당한 이유를 들어 보세요.)\n"
       +"Use Korean only. 한국어만 사용하세요. Answer as if you are elon musk."
-    
 
-    const judgement2 = await open_ai_service.getResponse(
-        systemPrompt,
-        judgement1 + `항변: ${userAppeal}`
+
+    const reJudgement = await open_ai_service.getResponse(
+      systemPrompt,
+      judgement + `항변: ${userAppeal}`
     );
-    const judgement2String = judgement2.payload;
+    const reJudgement2 = await groq_llama3_service.getResponse2(
+      systemPrompt,
+      judgement + `항변: ${userAppeal}`
+    );
+    const reJudgement3 = await groq_mixtral_service.getResponse3(
+      systemPrompt,
+      judgement + `항변: ${userAppeal}`
+    );
+
+
+    const reJudgementString = reJudgement.payload;
     newMessage = {
-      message: judgement2String,
+      message: reJudgementString,
       side: 'left',
       avatar: "/judge.png" // 사용자 프로필 이미지 경로
     }
