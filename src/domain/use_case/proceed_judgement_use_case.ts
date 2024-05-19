@@ -6,16 +6,12 @@ import { useState } from "react"
 import OpenAIService from "@/data/service/open_ai_service";
 
 export default class ProceedJudgementUseCase {
-  async indictmentAndFact(
+  async indictment(
     userPromptFemale: string,
-    userPromptMale: string,
-    chatList: string[]
+    chatObjectList: object[]
   ) {
-    const userPrompt = `여자 입장: ${userPromptFemale}남자 입장: ${userPromptMale}`;
-    
+    console.log(userPromptFemale)
     const open_ai_service = new OpenAIService();
-    
-    //const decide_system_prompt_use_case = new decideSystemPromptUseCase();
 
     var systemPrompt = "";
 
@@ -34,7 +30,24 @@ export default class ProceedJudgementUseCase {
         userPromptFemale
     );
     const indictmentString = indictment.payload;
-    chatList.push(indictmentString)
+
+    var newMessage = {
+      message: indictmentString,
+      side: 'left',
+      avatar: "/judge.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
+
+    return chatObjectList;
+  }
+
+  async extractFact(
+    userPrompt: string,
+    chatObjectList: object[]
+  ) {
+    const open_ai_service = new OpenAIService();
+
+    var systemPrompt = "";
 
     // 판결 2. 팩트 체크
     systemPrompt = "You are a judge. You will be given a summarization of a conflict from the couple.\n"
@@ -50,9 +63,14 @@ export default class ProceedJudgementUseCase {
       userPrompt
     );
     const factCheckString = factCheck.payload;
-    chatList.push(factCheckString)
+    var newMessage = {
+      message: factCheckString,
+      side: 'left',
+      avatar: "/judge.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
 
-    return chatList;
+    return chatObjectList;
   }
 
   async summarizeAndJudgement(
@@ -60,7 +78,7 @@ export default class ProceedJudgementUseCase {
     isFact: boolean,
     factCheck1: string,
     userFactCheck: string,
-    chatList: string[]
+    chatObjectList: object[]
   ) {
     //const userPrompt = `여자 입장: ${userPromptFemale}남자 입장: ${userPromptMale}`;
     
@@ -77,7 +95,13 @@ export default class ProceedJudgementUseCase {
         userFactCheck
       );
       const factCheck2String = factCheck2.payload;
-      chatList.push(factCheck2String);
+      
+      var newMessage = {
+        message: factCheck2String,
+        side: 'left',
+        avatar: "/judge.png" // 사용자 프로필 이미지 경로
+      }
+      chatObjectList.push(newMessage)
     }
 
 
@@ -93,7 +117,12 @@ export default class ProceedJudgementUseCase {
         userPrompt
     );
     const summaryString = summary.payload;
-    chatList.push(summaryString)
+    newMessage = {
+      message: summaryString,
+      side: 'left',
+      avatar: "/judge.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
 
 
     // 판결 4. 본 판결
@@ -130,15 +159,20 @@ export default class ProceedJudgementUseCase {
       summaryString
     );
     const judgementString = judgement.payload;
-    chatList.push(judgementString)
 
-    return chatList;
+    newMessage = {
+      message: judgementString,
+      side: 'left',
+      avatar: "/judge.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
+    return chatObjectList;
   }
 
   async rejudgement(
     judgement1: string,
     userAppeal: string,
-    chatList: string[]
+    chatObjectList: object[]
   ) {
 
     const open_ai_service = new OpenAIService();
@@ -146,11 +180,10 @@ export default class ProceedJudgementUseCase {
     //const decide_system_prompt_use_case = new decideSystemPromptUseCase();
 
     var systemPrompt = "";
-    const [appealCount, setAppealCount] = useState(0);
+    var appealCount = 0;
 
 
     // 상고
-    setAppealCount(0);
 
     systemPrompt = "You are a judge. You will be given two explanations of a conflict from the couple.\n"
       +"Your task are as following.\n"
@@ -184,10 +217,15 @@ export default class ProceedJudgementUseCase {
         judgement1 + `항변: ${userAppeal}`
     );
     const judgement2String = judgement2.payload;
-    chatList.push(judgement2String)
+    var newMessage = {
+      message: judgement2String,
+      side: 'left',
+      avatar: "/judge.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
 
-    setAppealCount(appealCount + 1)
+    appealCount += 1;
 
-    return chatList;
+    return chatObjectList;
   }
 }

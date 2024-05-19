@@ -15,87 +15,101 @@ export default function Home() {
     const [userPromptFemale, setUserPromptFemale] = useState("")
     const [userPromptMale, setUserPromptMale] = useState("")
     var [chatList, setChatList] = useState<string[]>([])
+    var [chatObjectList, setChatObjectList] = useState<object[]>([])
     // const [response, setResponse] = useState("")
     const [functionCount, setFunctionCount] = useState(0);
     const [isFact, setFact] = useState(false);
 
-    const addMessage = (message: StyledString) => {
-    const side = chatList.length % 2 === 0 ? "left" : "right";
-    const avatarPath = side === "left" ? "/judge.png" : "/user.png"; // 왼쪽과 오른쪽에 따른 이미지 경로 설정
+    const addMessage = (input: string, side: string) => {
+        const avatarPath = side === "left" ? "/judge.png" : "/user.png"; // 왼쪽과 오른쪽에 따른 이미지 경로 설정
 
-    const newMessage = {
-        message: message,
-        side: side,
-        avatar: avatarPath // 사용자 프로필 이미지 경로
-    };
-    setChatList([...chatList, newMessage]);
-    //setUserPrompt(""); // 입력 필드 클리어
+        const newMessage = {
+            message: input,
+            side: side,
+            avatar: avatarPath // 사용자 프로필 이미지 경로
+        };
+        setChatObjectList([...chatObjectList, newMessage]);
+        //setUserPrompt(""); // 입력 필드 클리어
     };
 
 
     const userClick = (input: string) => {
-        addMessage(input)
+        chatList.push(input)
         switch (functionCount) {
             case 0:
                 setUserPromptFemale(input)
-                chatList.push(input)
+                firstResponse()
                 setFunctionCount(1)
+                console.log('Female')
                 break;
             case 1:
                 setUserPromptMale(input)
-                chatList.push(input)
-                firstResponse()
+                secondResponse()
+                console.log('Male')
                 break;
             case 2:
                 setUserPromptMale(input)
-                chatList.push(input)
-                secondResponse(input)
+                
+                thirdResponse(input)
+                console.log('공소제기, 팩트')
             default:
                 setUserPromptMale(input)
-                chatList.push(input)
-                thirdResponse(input)
+                
+                fourthResponse(input)
         }
         //chatList.push({role: 'user', content: userPrompt})
     }
 
     const firstResponse = async () => {
         const proceed_judgement_use_case = new ProceedJudgementUseCase();
-        const newList = await proceed_judgement_use_case.indictmentAndFact(
+        const newList = await proceed_judgement_use_case.indictment(
             userPromptFemale,
-            userPromptMale,
-            chatList
+            chatObjectList
         );
-        setChatList(newList);
+        setChatObjectList(newList);
         setFunctionCount(2);
         //setChatList([...chatList, {role: 'user', content: response.payload}])
     }
 
-    const secondResponse = async (userFactCheck: string) => {
-        if (chatList[-1].includes('설명이 일치합니다')) {
-            setFact(true);
-        } else {
-            setFact(false);
-        }
+    const secondResponse = async () => {
+        const proceed_judgement_use_case = new ProceedJudgementUseCase();
+        const newList = await proceed_judgement_use_case.extractFact(
+            `여자 입장: ${userPromptFemale}남자 입장: ${userPromptMale}`,
+            chatObjectList
+        );
+        setChatObjectList(newList);
+        setFunctionCount(3);
+        //setChatList([...chatList, {role: 'user', content: response.payload}])
+    }
+
+    const thirdResponse = async (userFactCheck: string) => {
+        // if (chatObjectList[-1].includes('설명이 일치합니다')) {
+        //     setFact(true);
+        // } else {
+        //     setFact(false);
+        // }
+        setFact(false); // 일단 버그 고치기 위해서 추가해놓음... 나중에 지울 예정
+        
         const proceed_judgement_use_case = new ProceedJudgementUseCase();
         const newList = await proceed_judgement_use_case.summarizeAndJudgement(
             `여자 입장: ${userPromptFemale}남자 입장: ${userPromptMale}`,
             isFact,
-            chatList[-1],
+            chatObjectList[chatObjectList.length - 1].message,
             userFactCheck,
-            chatList
+            chatObjectList
         );
-        setChatList(newList);
-        setFunctionCount(3);
+        setChatObjectList(newList);
+        setFunctionCount(4);
     }
 
-    const thirdResponse = async (userAppeal: string) => {
+    const fourthResponse = async (userAppeal: string) => {
         const proceed_judgement_use_case = new ProceedJudgementUseCase();
         const newList = await proceed_judgement_use_case.rejudgement(
-            chatList[-1],
+            chatObjectList[chatObjectList.length - 1].message,
             userAppeal,
-            chatList
+            chatObjectList
         );
-        setChatList(newList);
+        setChatObjectList(newList);
         setFunctionCount(functionCount + 1);
     }
 
@@ -119,7 +133,7 @@ export default function Home() {
             <header className="App-header">
                 <div>
                     <ul className="chat-container">
-                        {chatList.map((item, index) => (
+                        {chatObjectList.map((item, index) => (
                         <div key={index} className={`message-container ${item.side}`}>
                             <img src={item.avatar} alt={`${item.username}'s avatar`} className="avatar" />
                             <li key={index} className={`chat-item ${item.side}`}>
@@ -141,7 +155,10 @@ export default function Home() {
                         required={false}
                         value={input}
                     />
-                    <Button type="mini" text="입력" onClick={() => userClick(input)} />
+                    <Button type="mini" text="입력" onClick={() => {
+                        addMessage(input, 'right')
+                        userClick(input)
+                    }} />
                 </div>
             </header>
         </div>

@@ -7,6 +7,7 @@ export default class OpenAIService {
     systemPrompt: string,
     userPrompt: string,
   ): Promise<CodeResponse> {
+    
     const openai = new OpenAI({apiKey: process.env.NEXT_PUBLIC_OPEN_AI_API_KEY, dangerouslyAllowBrowser: true});
 
     try {
@@ -18,7 +19,7 @@ export default class OpenAIService {
           ],
         });
       var answer = response.choices[0].message.content;
-      
+      console.log('OpenAI called')
       return new CodeResponse(
         Result.SUCCESS,
         "성공적으로 quoteList를 받아왔습니다.",
