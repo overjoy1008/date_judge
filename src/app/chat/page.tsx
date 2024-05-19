@@ -20,31 +20,31 @@ export default function Home() {
     const [functionCount, setFunctionCount] = useState(0);
     const [isFact, setFact] = useState(false);
 
-    const addMessage = (input: string, side: string) => {
-        const avatarPath = side === "left" ? "/judge.png" : "/user.png"; // 왼쪽과 오른쪽에 따른 이미지 경로 설정
+    // const addMessage = (input: string, side: string) => {
+    //     const avatarPath = side === "left" ? "/judge.png" : "/user.png"; // 왼쪽과 오른쪽에 따른 이미지 경로 설정
 
-        const newMessage = {
-            message: input,
-            side: side,
-            avatar: avatarPath // 사용자 프로필 이미지 경로
-        };
-        setChatObjectList([...chatObjectList, newMessage]);
-        //setUserPrompt(""); // 입력 필드 클리어
-    };
+    //     const newMessage = {
+    //         message: input,
+    //         side: side,
+    //         avatar: avatarPath // 사용자 프로필 이미지 경로
+    //     };
+    //     setChatObjectList([...chatObjectList, newMessage]);
+    //     //setUserPrompt(""); // 입력 필드 클리어
+    // };
 
 
     const userClick = (input: string) => {
-        chatList.push(input)
+        // chatList.push(input)
         switch (functionCount) {
             case 0:
-                setUserPromptFemale(input)
-                firstResponse()
+                // setUserPromptFemale(input)
+                firstResponse(input)
                 setFunctionCount(1)
                 console.log('Female')
                 break;
             case 1:
-                setUserPromptMale(input)
-                secondResponse()
+                // setUserPromptMale(input)
+                secondResponse(input)
                 console.log('Male')
                 break;
             case 2:
@@ -60,25 +60,25 @@ export default function Home() {
         //chatList.push({role: 'user', content: userPrompt})
     }
 
-    const firstResponse = async () => {
+    const firstResponse = async (userPromptFemale: string) => {
         const proceed_judgement_use_case = new ProceedJudgementUseCase();
         const newList = await proceed_judgement_use_case.indictment(
             userPromptFemale,
             chatObjectList
         );
         setChatObjectList(newList);
-        setFunctionCount(2);
+        setFunctionCount(1);
         //setChatList([...chatList, {role: 'user', content: response.payload}])
     }
 
-    const secondResponse = async () => {
+    const secondResponse = async (userPromptMale: string) => {
         const proceed_judgement_use_case = new ProceedJudgementUseCase();
         const newList = await proceed_judgement_use_case.extractFact(
-            `여자 입장: ${userPromptFemale}남자 입장: ${userPromptMale}`,
+            `여자 입장: ${chatObjectList[0].message}남자 입장: ${userPromptMale}`,
             chatObjectList
         );
         setChatObjectList(newList);
-        setFunctionCount(3);
+        setFunctionCount(2);
         //setChatList([...chatList, {role: 'user', content: response.payload}])
     }
 
@@ -92,14 +92,14 @@ export default function Home() {
         
         const proceed_judgement_use_case = new ProceedJudgementUseCase();
         const newList = await proceed_judgement_use_case.summarizeAndJudgement(
-            `여자 입장: ${userPromptFemale}남자 입장: ${userPromptMale}`,
+            `여자 입장: ${chatObjectList[0].message}남자 입장: ${chatObjectList[2].message}`,
             isFact,
             chatObjectList[chatObjectList.length - 1].message,
             userFactCheck,
             chatObjectList
         );
         setChatObjectList(newList);
-        setFunctionCount(4);
+        setFunctionCount(3);
     }
 
     const fourthResponse = async (userAppeal: string) => {
@@ -156,7 +156,7 @@ export default function Home() {
                         value={input}
                     />
                     <Button type="mini" text="입력" onClick={() => {
-                        addMessage(input, 'right')
+                        //addMessage(input, 'right')
                         userClick(input)
                     }} />
                 </div>

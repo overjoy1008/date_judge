@@ -10,7 +10,13 @@ export default class ProceedJudgementUseCase {
     userPromptFemale: string,
     chatObjectList: object[]
   ) {
-    console.log(userPromptFemale)
+    var newMessage = {
+      message: userPromptFemale,
+      side: 'right',
+      avatar: "/user.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
+
     const open_ai_service = new OpenAIService();
 
     var systemPrompt = "";
@@ -18,11 +24,12 @@ export default class ProceedJudgementUseCase {
 
     // 판결 1. 공소제기
     systemPrompt = "You are a judge. You will be given an explanation of a conflict from the couple.\n"
-      + "Carefully analyze the explanation and reform it in a refined sentence.\n"
-      + "Output format should be as following.\n"
-      + "Case name: (a title summarizing the incident)\n"
-      + "Summarization: (an explanation that will be passed to the opponent.)\n"
-      + "Use Korean only. 한국어만 사용하세요"
+    +"Your task are as following.\n"
+    +"Carefully analyze the explanation and reform it in a refined sentence.\n"
+    +"Output format should be as following.\n"
+    +"사건 이름: (a title summarizing the incident)\n"
+    +"상황 설명: (a detailed summarization that will be passed to the opponent.)\n"
+    +"Use Korean only. 한국어만 사용하세요"
     
 
     const indictment = await open_ai_service.getResponse(
@@ -31,7 +38,7 @@ export default class ProceedJudgementUseCase {
     );
     const indictmentString = indictment.payload;
 
-    var newMessage = {
+    newMessage = {
       message: indictmentString,
       side: 'left',
       avatar: "/judge.png" // 사용자 프로필 이미지 경로
@@ -45,17 +52,22 @@ export default class ProceedJudgementUseCase {
     userPrompt: string,
     chatObjectList: object[]
   ) {
+    var newMessage = {
+      message: userPrompt,
+      side: 'right',
+      avatar: "/user.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
+
     const open_ai_service = new OpenAIService();
 
     var systemPrompt = "";
 
     // 판결 2. 팩트 체크
-    systemPrompt = "You are a judge. You will be given a summarization of a conflict from the couple.\n"
-      +"Your task are as following.\n"
-      +"Carefully examine the difference between the two explanations."
-      +"If there is a difference between the two explanation, ask the user about it and verify it."
-      +"If there is not a difference between the two explanation, say 설명이 일치합니다.\n"
-      +"Use Korean only. 한국어만 사용하세요."
+    systemPrompt = "You are a judge. You will be given an explanation of a conflict from the couple.\n"
+    +"Your task are as following.\n"
+    +"Carefully examine the difference between the two explanations.\n"
+    +"Use Korean only. 한국어만 사용하세요."
     
 
     const factCheck = await open_ai_service.getResponse(
@@ -63,7 +75,8 @@ export default class ProceedJudgementUseCase {
       userPrompt
     );
     const factCheckString = factCheck.payload;
-    var newMessage = {
+    
+    newMessage = {
       message: factCheckString,
       side: 'left',
       avatar: "/judge.png" // 사용자 프로필 이미지 경로
@@ -76,10 +89,17 @@ export default class ProceedJudgementUseCase {
   async summarizeAndJudgement(
     userPrompt: string,
     isFact: boolean,
-    factCheck1: string,
+    factCheck: string,
     userFactCheck: string,
     chatObjectList: object[]
   ) {
+    var newMessage = {
+      message: userFactCheck,
+      side: 'right',
+      avatar: "/user.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
+
     //const userPrompt = `여자 입장: ${userPromptFemale}남자 입장: ${userPromptMale}`;
     
     const open_ai_service = new OpenAIService();
@@ -88,21 +108,24 @@ export default class ProceedJudgementUseCase {
 
     var systemPrompt = "";
 
-    if (!isFact) {
-      // 판결 2 -- 재판결
-      const factCheck2 = await open_ai_service.getResponse(
-        factCheck1,
-        userFactCheck
-      );
-      const factCheck2String = factCheck2.payload;
+    // if (!isFact) {
+    //   // 판결 2 -- 재판결
+    //   const factCheck2 = await open_ai_service.getResponse(
+    //     factCheck1,
+    //     userFactCheck
+    //   );
+    //   const factCheck2String = factCheck2.payload;
       
-      var newMessage = {
-        message: factCheck2String,
-        side: 'left',
-        avatar: "/judge.png" // 사용자 프로필 이미지 경로
-      }
-      chatObjectList.push(newMessage)
-    }
+    //   newMessage = {
+    //     message: factCheck2String,
+    //     side: 'left',
+    //     avatar: "/judge.png" // 사용자 프로필 이미지 경로
+    //   }
+    //   chatObjectList.push(newMessage)
+    // }
+    // else {
+    //   const factCheck2 = factCheck1;
+    // }
 
 
     // 판결 3. 요약
@@ -114,7 +137,7 @@ export default class ProceedJudgementUseCase {
 
     const summary = await open_ai_service.getResponse(
         systemPrompt,
-        userPrompt
+        `상황 설명: ${userPrompt} + fact check: ${factCheck}`
     );
     const summaryString = summary.payload;
     newMessage = {
@@ -151,7 +174,7 @@ export default class ProceedJudgementUseCase {
       +"여자 입장에서 상황 이해: (your summarization of female explanation)"
       +"Judgement: (whose fault is it? show the percentage) "
       +"Reasoning: (Your reasoning should be based on 한국 연애 예절. 양쪽의 입장에서 몰입해서 정당한 이유를 들어 보세요.)\n"
-      +"Use Korean only. 한국어만 사용하세요. 장난스러운 어투로 대답하세요."
+      +"Use Korean only. 한국어만 사용하세요. Answer as if you are elon musk."
   
 
     const judgement = await open_ai_service.getResponse(
@@ -174,6 +197,13 @@ export default class ProceedJudgementUseCase {
     userAppeal: string,
     chatObjectList: object[]
   ) {
+    var newMessage = {
+      message: userAppeal,
+      side: 'right',
+      avatar: "/user.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
+    
 
     const open_ai_service = new OpenAIService();
     
@@ -209,7 +239,7 @@ export default class ProceedJudgementUseCase {
       +"여자 입장에서 상황 이해: (your summarization of female explanation)"
       +"Judgement: (whose fault is it? show the percentage) "
       +"Reasoning: (Your reasoning should be based on 한국 연애 예절. 양쪽의 입장에서 몰입해서 정당한 이유를 들어 보세요.)\n"
-      +"Use Korean only. 한국어만 사용하세요. 장난스러운 어투로 대답하세요."
+      +"Use Korean only. 한국어만 사용하세요. Answer as if you are elon musk."
     
 
     const judgement2 = await open_ai_service.getResponse(
@@ -217,7 +247,7 @@ export default class ProceedJudgementUseCase {
         judgement1 + `항변: ${userAppeal}`
     );
     const judgement2String = judgement2.payload;
-    var newMessage = {
+    newMessage = {
       message: judgement2String,
       side: 'left',
       avatar: "/judge.png" // 사용자 프로필 이미지 경로
