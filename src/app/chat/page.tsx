@@ -18,19 +18,19 @@ export default function Home() {
     var [chatObjectList, setChatObjectList] = useState<object[]>([])
     // const [response, setResponse] = useState("")
     const [functionCount, setFunctionCount] = useState(0);
-    const [isFact, setFact] = useState(false);
+    const [finalOpinion, setFinalOpinion] = useState("");
 
-    // const addMessage = (input: string, side: string) => {
-    //     const avatarPath = side === "left" ? "/judge.png" : "/user.png"; // 왼쪽과 오른쪽에 따른 이미지 경로 설정
+    const addMessage = (input: string, side: string) => {
+        const avatarPath = side === "left" ? "/judge.png" : "/user.png"; // 왼쪽과 오른쪽에 따른 이미지 경로 설정
 
-    //     const newMessage = {
-    //         message: input,
-    //         side: side,
-    //         avatar: avatarPath // 사용자 프로필 이미지 경로
-    //     };
-    //     setChatObjectList([...chatObjectList, newMessage]);
-    //     //setUserPrompt(""); // 입력 필드 클리어
-    // };
+        const newMessage = {
+            message: input,
+            side: side,
+            avatar: avatarPath // 사용자 프로필 이미지 경로
+        };
+        setChatObjectList([...chatObjectList, newMessage]);
+        //setUserPrompt(""); // 입력 필드 클리어
+    };
 
 
     const userClick = (input: string) => {
@@ -79,6 +79,8 @@ export default function Home() {
         );
         setChatObjectList(newList);
         setFunctionCount(2);
+        setFinalOpinion(chatObjectList[chatObjectList.length - 1].message);
+        addMessage('추가적으로 항변할 내용이 있으십니까?', 'left')
         //setChatList([...chatList, {role: 'user', content: response.payload}])
     }
 
@@ -103,14 +105,33 @@ export default function Home() {
     // }
 
     const thirdResponse = async (userAppeal: string) => {
-        const proceed_judgement_use_case = new ProceedJudgementUseCase();
-        const newList = await proceed_judgement_use_case.rejudgement(
-            chatObjectList[chatObjectList.length - 1].message,
-            userAppeal,
-            chatObjectList
-        );
-        setChatObjectList(newList);
-        setFunctionCount(functionCount + 1);
+        if (functionCount <= 3) {
+            const proceed_judgement_use_case = new ProceedJudgementUseCase();
+            const newList = await proceed_judgement_use_case.rejudgement(
+                chatObjectList[chatObjectList.length - 1].message,
+                userAppeal,
+                chatObjectList,
+                finalOpinion
+            );
+            setChatObjectList(newList);
+            setFunctionCount(functionCount + 1);
+            setFinalOpinion(chatObjectList[chatObjectList.length - 1].message);
+        }
+        else {
+            var finalAppeal = {
+                message: userAppeal,
+                side: 'right',
+                avatar: "/user.png" // 사용자 프로필 이미지 경로
+              }
+              chatObjectList.push(finalAppeal)
+            var finalMessage = {
+                message: "관계 다툼은 주로 한쪽만의 잘못 때문이 아니라 서로의 소통 부족 혹은 소통에서 비롯된 오해로 인해 발생되곤 합니다. 두 분이서 서로 대화를 더 시도하시고 원만한 합의를 맺으시길 바라겠습니다.",
+                side: 'left',
+                avatar: "/judge.png" // 사용자 프로필 이미지 경로
+            }
+            chatObjectList.push(finalMessage);
+            setFunctionCount(0);
+        }
     }
 
 

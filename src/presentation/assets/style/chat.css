@@ -69,7 +69,7 @@
     flex-direction: column;
     align-items: flex-start;
     overflow-y: auto;
-    max-height: 400px; /* Adjust based on your needs */
+    max-height: 700px; /* Adjust based on your needs */
     width: 100%; /* 전체 너비를 사용하도록 설정 */
     max-width: 90%; /* 최대 너비를 화면의 70%로 제한 */
     margin: auto; /* 가운데 정렬 */

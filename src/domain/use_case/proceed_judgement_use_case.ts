@@ -1,5 +1,5 @@
 // import CodeResponse from "@/app/code_response";
-import { useState } from "react"
+// import { useState } from "react"
 // import { blank } from "@/app/data";
 // import { Question, Result } from "@/app/types";
 // import decideSystemPromptUseCase from "@/domain/use_case/decide_system_prompt_use_case";
@@ -102,6 +102,8 @@ export default class ProceedJudgementUseCase {
     );
 
     const factCheckString = factCheck.payload;
+    const factCheckString2 = factCheck2.payload;
+    const factCheckString3 = factCheck3.payload;
     
     newMessage = {
       message: factCheckString,
@@ -169,14 +171,16 @@ export default class ProceedJudgementUseCase {
     );
     const summary2 = await groq_llama3_service.getResponse2(
       systemPrompt,
-      `상황 설명: ${userPrompt} + fact check: ${factCheckString}`
+      `상황 설명: ${userPrompt} + fact check: ${factCheckString2}`
     );
     const summary3 = await groq_mixtral_service.getResponse3(
       systemPrompt,
-      `상황 설명: ${userPrompt} + fact check: ${factCheckString}`
+      `상황 설명: ${userPrompt} + fact check: ${factCheckString3}`
     );
 
     const summaryString = summary.payload;
+    const summaryString2 = summary2.payload;
+    const summaryString3 = summary3.payload;
     newMessage = {
       message: summaryString,
       side: 'left',
@@ -219,28 +223,60 @@ export default class ProceedJudgementUseCase {
     );
     const judgement2 = await groq_llama3_service.getResponse2(
       systemPrompt,
-      summaryString
+      summaryString2
     );
     const judgement3 = await groq_mixtral_service.getResponse3(
       systemPrompt,
-      summaryString
+      summaryString3
     );
 
     const judgementString = judgement.payload;
-
+    const judgementString2 = judgement2.payload;
+    const judgementString3 = judgement3.payload;
     newMessage = {
       message: judgementString,
       side: 'left',
       avatar: "/judge.png" // 사용자 프로필 이미지 경로
     }
     chatObjectList.push(newMessage)
+
+    
+    // 판결 5. 의견 종합
+
+    systemPrompt = "You are a judge. You will be given a verdict that has been made by the judge.\n"
+    +"Your task are as following.\n"
+    +"Given the verdict, summarize the situation and provide your opinion.\n"
+    +"If the verdict is unanimous, provide your opinion on the verdict.\n"
+    +"If the verdict is not unanimous, provide the majority opinion and the minority opinion. Then give the final verdict.\n"
+    +"Use Korean only. 한국어만 사용하세요."
+  
+    const finalOpinion = await open_ai_service.getResponse(
+      systemPrompt,
+      `판결 1: ${judgementString} + 판결 2: ${judgementString2} + 판결 3: ${judgementString3}`
+    );
+
+    const finalOpinionString = finalOpinion.payload;
+
+    newMessage = {
+      message: finalOpinionString,
+      side: 'left',
+      avatar: "/judge.png" // 사용자 프로필 이미지 경로
+    }
+    chatObjectList.push(newMessage)
+
+
     return chatObjectList;
   }
+
+
+
+
 
   async rejudgement(
     judgement: string,
     userAppeal: string,
-    chatObjectList: object[]
+    chatObjectList: object[],
+    finalOpinion: string
   ) {
     var newMessage = {
       message: userAppeal,
@@ -258,7 +294,6 @@ export default class ProceedJudgementUseCase {
     //const decide_system_prompt_use_case = new decideSystemPromptUseCase();
 
     var systemPrompt = "";
-    var appealCount = 0;
 
 
     // 상고
@@ -292,15 +327,7 @@ export default class ProceedJudgementUseCase {
 
     const reJudgement = await open_ai_service.getResponse(
       systemPrompt,
-      judgement + `항변: ${userAppeal}`
-    );
-    const reJudgement2 = await groq_llama3_service.getResponse2(
-      systemPrompt,
-      judgement + `항변: ${userAppeal}`
-    );
-    const reJudgement3 = await groq_mixtral_service.getResponse3(
-      systemPrompt,
-      judgement + `항변: ${userAppeal}`
+      finalOpinion + `항변: ${userAppeal}`
     );
 
 
@@ -311,8 +338,6 @@ export default class ProceedJudgementUseCase {
       avatar: "/judge.png" // 사용자 프로필 이미지 경로
     }
     chatObjectList.push(newMessage)
-
-    appealCount += 1;
 
     return chatObjectList;
   }
