@@ -1,0 +1,98 @@
+.message-container {
+    display: flex;
+    align-items: center;
+    margin: 5px 10px;
+}
+
+.chat-list {
+    list-style: none;
+    padding: 0;
+}
+
+.chat-item {
+    max-width: 70%;
+    margin: 5px 10px;
+    padding: 10px;
+    border-radius: 8px;
+    color: #000;
+    display: flex;
+    align-items: center;
+    flex-direction: column; /* 메시지가 세로로 스택되도록 변경 */
+    overflow-wrap: break-word; /* 단어가 너무 길면 자동으로 줄바꿈 */
+    word-wrap: break-word; /* 이전 버전의 브라우저를 대응 */
+    overflow: hidden;  /*내용이 넘칠 경우 숨김 처리 */
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 0 10px; /* 아이콘과 메시지 사이의 간격 */
+}
+
+.chat-item.left .avatar {
+    margin-right: 10px;
+}
+
+.chat-item.right .avatar {
+    margin-left: 10px; /* 오른쪽 아이템에 대한 아이콘 정렬 */
+}
+
+.chat-item.left {
+    background-color: #fff;
+    /*margin-left: 10px;*/
+    justify-content: flex-start; /**/
+    flex-direction: row;
+}
+
+.chat-item.right {
+    background-color: #005596;
+    /*margin-right: 10px;*/
+    align-self: flex-end;
+    color: #fff;
+    flex-direction: row-reverse;
+}
+
+.message-container.left {
+    justify-content: flex-start; /**/
+    flex-direction: row; /* 왼쪽 메시지는 프로필 사진을 왼쪽에 위치 */
+}
+
+.message-container.right {
+    align-self: flex-end;
+    flex-direction: row-reverse; /* 오른쪽 메시지는 프로필 사진을 오른쪽에 위치 */
+}
+
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: 400px; /* Adjust based on your needs */
+    width: 100%; /* 전체 너비를 사용하도록 설정 */
+    max-width: 90%; /* 최대 너비를 화면의 70%로 제한 */
+    margin: auto; /* 가운데 정렬 */
+}
+
+.input-container {
+    position: fixed;  /* 화면 하단에 고정 */
+    bottom: 0;        /* 하단에 위치 */
+    left: 0;          /* 왼쪽에서 시작 */
+    right: 0;         /* 오른쪽까지 확장 */
+    max-width: 90%;   /* 최대 너비를 90%로 설정 */
+    margin: 0 auto;   /* 좌우 자동 마진으로 중앙 정렬 */
+    display: flex;
+    justify-content: space-between; /* 자식 요소들을 중앙에 위치 */
+    padding: 10px 20px; /* 패딩 조정 */
+    /*background-color: #fff;  배경색 지정 */
+    border-top: 1px solid #ccc; /* 상단 경계선 스타일 */
+    z-index: 1000; /* 다른 요소들 위에 오도록 z-index 설정 */
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

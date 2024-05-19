@@ -5,6 +5,7 @@ import { useRef, useState } from "react"
 import Button from "../../presentation/components/button";
 import InputField from "@/presentation/components/input_field";
 import ProceedJudgementUseCase from "@/domain/use_case/proceed_judgement_use_case";
+import { StyledString } from "next/dist/build/swc";
 // import { userPrompt } from "@/presentation/components/input_field/index"
 
 export default function Home() {
@@ -18,8 +19,22 @@ export default function Home() {
     const [functionCount, setFunctionCount] = useState(0);
     const [isFact, setFact] = useState(false);
 
+    const addMessage = (message: StyledString) => {
+    const side = chatList.length % 2 === 0 ? "left" : "right";
+    const avatarPath = side === "left" ? "/judge.png" : "/user.png"; // 왼쪽과 오른쪽에 따른 이미지 경로 설정
 
-    const userClick = (userPrompt: string) => {
+    const newMessage = {
+        message: message,
+        side: side,
+        avatar: avatarPath // 사용자 프로필 이미지 경로
+    };
+    setChatList([...chatList, newMessage]);
+    //setUserPrompt(""); // 입력 필드 클리어
+    };
+
+
+    const userClick = (input: string) => {
+        addMessage(input)
         switch (functionCount) {
             case 0:
                 setUserPromptFemale(input)
@@ -103,19 +118,26 @@ export default function Home() {
         <div className="App">
             <header className="App-header">
                 <div>
-                    <ul>
+                    <ul className="chat-container">
                         {chatList.map((item, index) => (
-                        <li key={index}>{item}</li>
+                        <div key={index} className={`message-container ${item.side}`}>
+                            <img src={item.avatar} alt={`${item.username}'s avatar`} className="avatar" />
+                            <li key={index} className={`chat-item ${item.side}`}>
+                                <div>
+                                    <strong>{item.username}</strong> {item.message}
+                                </div>
+                            </li>
+                        </div>
                         ))}
                     </ul>
                     <br/><br/>
                         
                 </div>
-                <div className="w100">
-                    <InputField
-                        type="add"
-                        placeholder="상황을 입력하세요..."
-                        toParent={(value: any) => setInput(value)}
+                <div className="input-container">
+                    <textarea
+                        className="input-field"
+                        placeholder="상황을 입력하세요."
+                        onChange={(e) => setInput(e.target.value)}
                         required={false}
                         value={input}
                     />

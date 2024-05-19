@@ -17,18 +17,17 @@ export default class ProceedJudgementUseCase {
     
     //const decide_system_prompt_use_case = new decideSystemPromptUseCase();
 
-    const [systemPrompt, setSystemPrompt] = useState("");
+    var systemPrompt = "";
 
 
     // 판결 1. 공소제기
-    setSystemPrompt(
-      "You are a judge. You will be given an explanation of a conflict from the couple.\n"
+    systemPrompt = "You are a judge. You will be given an explanation of a conflict from the couple.\n"
       + "Carefully analyze the explanation and reform it in a refined sentence.\n"
       + "Output format should be as following.\n"
       + "Case name: (a title summarizing the incident)\n"
       + "Summarization: (an explanation that will be passed to the opponent.)\n"
       + "Use Korean only. 한국어만 사용하세요"
-    );
+    
 
     const indictment = await open_ai_service.getResponse(
         systemPrompt,
@@ -38,14 +37,13 @@ export default class ProceedJudgementUseCase {
     chatList.push(indictmentString)
 
     // 판결 2. 팩트 체크
-    setSystemPrompt(
-      "You are a judge. You will be given a summarization of a conflict from the couple.\n"
+    systemPrompt = "You are a judge. You will be given a summarization of a conflict from the couple.\n"
       +"Your task are as following.\n"
       +"Carefully examine the difference between the two explanations."
       +"If there is a difference between the two explanation, ask the user about it and verify it."
       +"If there is not a difference between the two explanation, say 설명이 일치합니다.\n"
       +"Use Korean only. 한국어만 사용하세요."
-    );
+    
 
     const factCheck = await open_ai_service.getResponse(
       systemPrompt,
@@ -70,7 +68,7 @@ export default class ProceedJudgementUseCase {
     
     //const decide_system_prompt_use_case = new decideSystemPromptUseCase();
 
-    const [systemPrompt, setSystemPrompt] = useState("");
+    var systemPrompt = "";
 
     if (!isFact) {
       // 판결 2 -- 재판결
@@ -84,12 +82,11 @@ export default class ProceedJudgementUseCase {
 
 
     // 판결 3. 요약
-    setSystemPrompt(
-      "You are a judge. You will be given a summarization of a conflict from the couple.\n"
+    systemPrompt = "You are a judge. You will be given a summarization of a conflict from the couple.\n"
       +"Your task are as following.\n"
       +"Summarize the situation. 두 사람의 입장을 모두 이해하고, 중립적으로 상황을 자세히 요약해보세요.\n"
       +"Use Korean only. 한국어만 사용하세요."
-    )
+    
 
     const summary = await open_ai_service.getResponse(
         systemPrompt,
@@ -101,8 +98,7 @@ export default class ProceedJudgementUseCase {
 
     // 판결 4. 본 판결
 
-    setSystemPrompt(
-      "You are a judge. You will be given two explanations of a conflict from the couple.\n"
+    systemPrompt = "You are a judge. You will be given two explanations of a conflict from the couple.\n"
       +"Your task are as following.\n"
       +"Make a verdict. 항상 한쪽이 잘못입니다.\n"
       +"If one side rebuts, add a ruling for that rebuttal.\n"
@@ -127,7 +123,7 @@ export default class ProceedJudgementUseCase {
       +"Judgement: (whose fault is it? show the percentage) "
       +"Reasoning: (Your reasoning should be based on 한국 연애 예절. 양쪽의 입장에서 몰입해서 정당한 이유를 들어 보세요.)\n"
       +"Use Korean only. 한국어만 사용하세요. 장난스러운 어투로 대답하세요."
-    );
+  
 
     const judgement = await open_ai_service.getResponse(
       systemPrompt,
@@ -149,15 +145,14 @@ export default class ProceedJudgementUseCase {
     
     //const decide_system_prompt_use_case = new decideSystemPromptUseCase();
 
-    const [systemPrompt, setSystemPrompt] = useState("");
+    var systemPrompt = "";
     const [appealCount, setAppealCount] = useState(0);
 
 
     // 상고
     setAppealCount(0);
 
-    setSystemPrompt(
-      "You are a judge. You will be given two explanations of a conflict from the couple.\n"
+    systemPrompt = "You are a judge. You will be given two explanations of a conflict from the couple.\n"
       +"Your task are as following.\n"
       +"Make a verdict. 항상 한쪽이 잘못입니다.\n"
       +"If one side rebuts, add a ruling for that rebuttal.\n"
@@ -182,7 +177,7 @@ export default class ProceedJudgementUseCase {
       +"Judgement: (whose fault is it? show the percentage) "
       +"Reasoning: (Your reasoning should be based on 한국 연애 예절. 양쪽의 입장에서 몰입해서 정당한 이유를 들어 보세요.)\n"
       +"Use Korean only. 한국어만 사용하세요. 장난스러운 어투로 대답하세요."
-    );
+    
 
     const judgement2 = await open_ai_service.getResponse(
         systemPrompt,
